@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+for x in $#
+do
+  case "$1" in
+    -p|--progress|progress)
+      bat complete
+      ;;
+    -h|--help)
+      echo "prep -h     : this screen"
+      echo "prep start  : start the challenge "
+      echo "prep day 1  : shows things todo in day 1"
+      echo "prep did 3  : adds checked in front of next 3 links in running day"
+      ;;
+    -*)
+      printf "Invalid argument !!\ncheck './prep -h'\n"
+      ;;
+  esac
+  printf "\n"
+done
+
+start(){
+  IFS='%' #preserve whitespaces
+  url="https://takeuforward.org/interviews/strivers-sde-sheet-top-coding-interview-problems/"
+  curl -s $url | pup 'details' | sed 's/<a href=//g;s/\/">//g;s/Day \([0-9]\+\)/\n[ Day \1 ]/g;s/https/\t\thttps/g;/Link\|YT$\|Find\|Problem\|Video/d' |cut -d'"' -f2| grep -v '<*>\|     \/' > todo
+  printf "Prep. started on : $(date)\n\n" | tee complete
+}
+
+day(){
+  if [ "$1" != "30" ];then
+    sed -n "/\[ Day $1 ]/, /\[ Day $(($1+1)) ]/p" todo | head -n -2
+  else
+    sed -n "/\[ Day $1 ]/, /\[ Day $(($1+1)) ]/p" todo
+  fi
+}
+
+did(){
+  prep_day=$(($(cat complete | cut -d ' ' -f6)-$(date | cut -d' ' -f2)+1))
+  day $prep_day
+  read -p "Enter links count('a' for day complete) : " count
+}
+
+$@
