@@ -40,4 +40,10 @@ did(){
   read -p "Enter links count('a' for day complete) : " count
 }
 
-$@
+for arg in $@
+do
+ if [[ $arg == "day" || $arg  == "start" || $arg == "did" ]]
+then 
+    $@
+fi
+done
