@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 
-prep_day=$(($(cat complete | cut -d ' ' -f6)-$(date | cut -d' ' -f2)+1))
+prep_day=$(cat complete|cut -d' ' -f3)
 
 start(){
   IFS='%' #preserve whitespaces
   url="https://takeuforward.org/interviews/strivers-sde-sheet-top-coding-interview-problems/"
   curl -s $url | pup 'details' | sed 's/<a href=//g;s/\/">//g;s/Day \([0-9]\+\)/\n[ Day \1 ]/g;s/https/\t\thttps/g;s/: //g;/Link\|YT$\|Find\|Problem\|Video/d' |cut -d'"' -f2| grep -v '<*>\|     \/' > todo
-  printf "Prep. started on : $(date)\n\n" | tee complete
-  day 1
+  printf "Challenge started ...\n\n"
+  printf "[ Day 1 ] : $(date)\n\n" | tee complete
+  day 1 | tail -n +3
 }
 
 day(){
